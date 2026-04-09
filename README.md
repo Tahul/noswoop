@@ -48,7 +48,3 @@ Based on the technique from [InstantSpaceSwitcher](https://github.com/jurplel/In
 - Trackpad swipe gestures still animate (they bypass the event tap)
 - Cmd+Tab to fullscreen apps may briefly flicker
 - May break on future macOS updates (uses undocumented CGEvent fields)
-
-## License
-
-Public domain.
