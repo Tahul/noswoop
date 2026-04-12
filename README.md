@@ -39,6 +39,8 @@ If you don't, you will be asked for your signature key identifier when building 
 
 ## Release & notarize
 
+👉 _This procedure is only used by repository maintainers to release new versions of Space Rabbit._
+
 Prior to distributing a release, create a new Git tag so that the new version is picked up during build. Tags should be formatted as such: `v1.0.0`.
 
 Once tagged, you can build the `Space Rabbit.app`:
