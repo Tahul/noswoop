@@ -50,6 +50,7 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
+      overflow: hidden;
       padding: 100px 24px 80px;
       min-height: 100vh;
     }
@@ -130,6 +131,10 @@
         0 2px 4px rgba(0,0,0,0.25) inset,
         0 4px 12px rgba(0,0,0,0.80),
         0 1px 4px rgba(0,0,0,0.80);
+    }
+
+    .btn-download svg {
+      flex: 0 0 auto;
     }
 
     p.hero-sub {
@@ -366,13 +371,14 @@
 
     @media (max-width: 768px) {
       #stars { display: none; }
+      .btn-download { font-size: 14px; padding: 16px 22px 18px; gap: 10px; }
     }
 
     @media (max-width: 720px) {
       .feature-list { grid-template-columns: repeat(2, 1fr); }
     }
 
-    @media (max-width: 400px) {
+    @media (max-width: 420px) {
       .feature-list { grid-template-columns: 1fr; }
     }
 
