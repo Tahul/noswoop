@@ -6,16 +6,16 @@ Space Rabbit removes animations when switching macOS Spaces. Reclaim hours of yo
 
 📦 **[Download Space Rabbit here](https://space-rabbit.app)**
 
-## Screenshots
-
-![space-rabbit-menu](https://github.com/user-attachments/assets/d094a99b-2cf6-4894-8606-bcee7f4470fe)
-
 ## Features
 
 - ✅ **Instant space switch** - your keyboard shortcut switches spaces with zero animation
 - ✅ **Auto-follow on Cmd+Tab** - switching to an app on another space takes you there instantly
 - ✅ **Reads your shortcuts** - picks up your bindings from System Settings automatically
 - ✅ **No SIP changes needed** - just classic accessibility permissions
+
+## Screenshots
+
+![space-rabbit-menu](https://github.com/user-attachments/assets/d094a99b-2cf6-4894-8606-bcee7f4470fe)
 
 ## Install
 
