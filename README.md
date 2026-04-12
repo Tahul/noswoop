@@ -1,15 +1,15 @@
-# Space Rabbit
+# 🐇 Space Rabbit
 
-🐇 Instant space switching on macOS.
+Instant space switching on macOS. Remove animations when switching macOS Spaces. Reclaim hours of your time every month.
 
-Remove animations when switching macOS Spaces. Reclaim hours of your time every month.
+📦 **[Download Space Rabbit here](https://space-rabbit.app)**
 
 ## Features
 
-- **Instant space switch** - your keyboard shortcut switches spaces with zero animation
-- **Auto-follow on Cmd+Tab** - switching to an app on another space takes you there instantly
-- **Reads your shortcuts** - picks up your bindings from System Settings automatically
-- **No SIP changes needed** - just classic accessibility permissions
+- ✅ **Instant space switch** - your keyboard shortcut switches spaces with zero animation
+- ✅ **Auto-follow on Cmd+Tab** - switching to an app on another space takes you there instantly
+- ✅ **Reads your shortcuts** - picks up your bindings from System Settings automatically
+- ✅ **No SIP changes needed** - just classic accessibility permissions
 
 ## Install
 
@@ -43,7 +43,7 @@ If you don't, you will be asked for your signature key identifier when building 
 
 Prior to distributing a release, create a new Git tag so that the new version is picked up during build. Tags should be formatted as such: `v1.0.0`.
 
-Once tagged, you can build the `Space Rabbit.app`:
+Once tagged, you can build `Space Rabbit.app`:
 
 ```bash
 make app
@@ -58,8 +58,8 @@ export SIGN_ID=Developer ID Application: Your Developer Name (IDENTIFIER_HERE)
 Finally, it needs to be packaged and notarized into `Space-Rabbit.dmg` as such:
 
 ```bash
-make dmg
-make notarize
+make dmg && \
+  make notarize
 ```
 
 When the final DMG has been packaged and notarized, simply draft a new release on [space-rabbit/releases](https://github.com/Tahul/space-rabbit/releases) and upload `Space-Rabbit.dmg`.
