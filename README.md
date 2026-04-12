@@ -21,7 +21,9 @@ Space Rabbit removes animations when switching macOS Spaces. Reclaim hours of yo
 
 Download the latest release from [GitHub Releases](https://github.com/Tahul/space-rabbit/releases) and drag **Space Rabbit.app** into your Applications folder.
 
-Grant Accessibility access when prompted (System Settings → Privacy & Security → Accessibility).
+Alternatively, you can also [download Space Rabbit from our website](https://space-rabbit.app).
+
+👉 **Grant Accessibility access when prompted** (System Settings → Privacy & Security → Accessibility).
 
 ## Setup
 
