@@ -6,10 +6,10 @@ Instant space switching on macOS. Remove animations when switching macOS Spaces.
 
 ## Features
 
-- ✅ **Instant space switch** - your keyboard shortcut switches spaces with zero animation
-- ✅ **Auto-follow on Cmd+Tab** - switching to an app on another space takes you there instantly
-- ✅ **Reads your shortcuts** - picks up your bindings from System Settings automatically
-- ✅ **No SIP changes needed** - just classic accessibility permissions
+✅ **Instant space switch** - your keyboard shortcut switches spaces with zero animation
+✅ **Auto-follow on Cmd+Tab** - switching to an app on another space takes you there instantly
+✅ **Reads your shortcuts** - picks up your bindings from System Settings automatically
+✅ **No SIP changes needed** - just classic accessibility permissions
 
 ## Install
 
