@@ -364,6 +364,10 @@
       gap: 14px;
     }
 
+    @media (max-width: 768px) {
+      #stars { display: none; }
+    }
+
     @media (max-width: 720px) {
       .feature-list { grid-template-columns: repeat(2, 1fr); }
     }
@@ -855,6 +859,8 @@
 
     // Starfield
     (function () {
+      if (window.matchMedia('(max-width: 768px)').matches) return;
+
       const canvas = document.getElementById('stars');
       const ctx = canvas.getContext('2d');
       const COUNT = 180;
