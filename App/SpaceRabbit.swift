@@ -1229,7 +1229,7 @@ gMenu = SwoopMenu()
 
 DispatchQueue.main.asyncAfter(deadline: .now() + 5) { checkForUpdates() }
 
-Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in
     flushSwitchCount()
 }
 
