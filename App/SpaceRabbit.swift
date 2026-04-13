@@ -65,6 +65,7 @@ var gTap:                  CFMachPort?
 var gEnabled:              Bool         = true
 var gInstantSwitchEnabled: Bool         = true
 var gAutoFollowEnabled:    Bool         = true
+var gSoundsEnabled:        Bool         = false
 var gSwitchCount:          Int          = 0
 var gKeyLeft:              Int64        = 123
 var gKeyRight:             Int64        = 124
@@ -94,9 +95,12 @@ final class SwoopMenu: NSObject {
     private let instantSwitchItem:     NSMenuItem
     private let autoFollowItem:        NSMenuItem
     private let statsItem:             NSMenuItem
+    private let updateAvailableItem:   NSMenuItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private let updateAvailableSep:    NSMenuItem = .separator()
     private let launchWarningItem:     NSMenuItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private let launchWarningSep:      NSMenuItem = .separator()
     private var statusMenu:            NSMenu!
+    private var updateDownloadURL:     String?
 
     override init() {
         let ud = UserDefaults.standard
@@ -104,11 +108,13 @@ final class SwoopMenu: NSObject {
             "spacerabbit.enabled":       true,
             "spacerabbit.instantSwitch": true,
             "spacerabbit.autoFollow":    true,
+            "spacerabbit.sounds":        false,
             "spacerabbit.switchCount":   0,
         ])
         gEnabled              = ud.bool(forKey: "spacerabbit.enabled")
         gInstantSwitchEnabled = ud.bool(forKey: "spacerabbit.instantSwitch")
         gAutoFollowEnabled    = ud.bool(forKey: "spacerabbit.autoFollow")
+        gSoundsEnabled        = ud.bool(forKey: "spacerabbit.sounds")
         gSwitchCount          = ud.integer(forKey: "spacerabbit.switchCount")
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -125,6 +131,11 @@ final class SwoopMenu: NSObject {
         statsItem         = NSMenuItem(title: "", action: nil, keyEquivalent: "")
 
         super.init()
+
+        updateAvailableItem.isHidden = true
+        updateAvailableItem.target   = self
+        updateAvailableItem.action   = #selector(openDownloadURL)
+        updateAvailableSep.isHidden  = true
 
         launchWarningItem.target = self
         launchWarningItem.action = #selector(openSettingsForLaunchAtLogin)
@@ -156,6 +167,8 @@ final class SwoopMenu: NSObject {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
 
         statusMenu = NSMenu()
+        statusMenu.addItem(updateAvailableItem)
+        statusMenu.addItem(updateAvailableSep)
         statusMenu.addItem(launchWarningItem)
         statusMenu.addItem(launchWarningSep)
         statusMenu.addItem(enableItem)
@@ -283,6 +296,7 @@ final class SwoopMenu: NSObject {
     private func setEnabled(_ enabled: Bool) {
         gEnabled = enabled
         UserDefaults.standard.set(gEnabled, forKey: "spacerabbit.enabled")
+        if enabled, gSoundsEnabled { NSSound(named: .init("Bottle"))?.play() }
         updateMenuBarIcon()
         updateEnableItem()
     }
@@ -313,6 +327,25 @@ final class SwoopMenu: NSObject {
                 color: NSColor.systemOrange
             )
         }
+    }
+
+    func showUpdateBanner(downloadURL: String) {
+        updateDownloadURL            = downloadURL
+        updateAvailableItem.attributedTitle = NSAttributedString(
+            string: "Update available  \u{00B7}  Click to download",
+            attributes: [
+                .font:            NSFont.systemFont(ofSize: 13),
+                .foregroundColor: NSColor.labelColor,
+            ]
+        )
+        updateAvailableItem.image   = tintedSymbol("arrow.down.circle.fill", color: .systemBlue)
+        updateAvailableItem.isHidden = false
+        updateAvailableSep.isHidden  = false
+    }
+
+    @objc private func openDownloadURL() {
+        guard let urlStr = updateDownloadURL, let url = URL(string: urlStr) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     /// Called by the settings window after it changes a feature toggle,
@@ -426,6 +459,7 @@ final class GeneralViewController: NSViewController {
 
     private var instantSwitchControl: NSSwitch!
     private var autoFollowControl:    NSSwitch!
+    private var soundsControl:        NSSwitch!
     private var launchAtLoginControl: NSSwitch!
     private var launchStatusLabel:    NSTextField!
     private var launchWarningBanner:  NSView!
@@ -437,6 +471,7 @@ final class GeneralViewController: NSViewController {
 
         instantSwitchControl = makeSwitch(gInstantSwitchEnabled, #selector(toggleInstantSwitch))
         autoFollowControl    = makeSwitch(gAutoFollowEnabled,    #selector(toggleAutoFollow))
+        soundsControl        = makeSwitch(gSoundsEnabled,        #selector(toggleSounds))
         launchAtLoginControl = makeSwitch(false,                  #selector(toggleLaunchAtLogin))
 
         launchStatusLabel                         = NSTextField(wrappingLabelWithString: "")
@@ -471,6 +506,15 @@ final class GeneralViewController: NSViewController {
             control: autoFollowControl
         ))
 
+        // Group 3: Interface
+        let group3 = groupContainer()
+        group3.addArrangedSubview(settingsRow(
+            symbol: "speaker.wave.2.fill",
+            color:  NSColor(red: 0.60, green: 0.35, blue: 0.85, alpha: 1),
+            label:  "Enable sounds",
+            control: soundsControl
+        ))
+
         launchWarningBanner = makeLaunchWarningBanner()
 
         let outerStack = NSStackView()
@@ -485,8 +529,11 @@ final class GeneralViewController: NSViewController {
         outerStack.setCustomSpacing(14, after: group1)
         outerStack.addArrangedSubview(sectionTitle("Features"))
         outerStack.addArrangedSubview(group2)
+        outerStack.setCustomSpacing(14, after: group2)
+        outerStack.addArrangedSubview(sectionTitle("Interface"))
+        outerStack.addArrangedSubview(group3)
 
-        for sub in [launchWarningBanner!, group1, group2] {
+        for sub in [launchWarningBanner!, group1, group2, group3] {
             sub.translatesAutoresizingMaskIntoConstraints = false
             outerStack.addConstraint(
                 sub.trailingAnchor.constraint(equalTo: outerStack.trailingAnchor)
@@ -510,6 +557,7 @@ final class GeneralViewController: NSViewController {
         super.viewWillAppear()
         instantSwitchControl.state = gInstantSwitchEnabled ? .on : .off
         autoFollowControl.state    = gAutoFollowEnabled    ? .on : .off
+        soundsControl.state        = gSoundsEnabled        ? .on : .off
         updateLaunchAtLoginUI()
         if GeneralViewController.pendingLaunchAtLoginAlert {
             GeneralViewController.pendingLaunchAtLoginAlert = false
@@ -696,6 +744,11 @@ final class GeneralViewController: NSViewController {
         gMenu?.syncMenuItems()
     }
 
+    @objc private func toggleSounds() {
+        gSoundsEnabled = soundsControl.state == .on
+        UserDefaults.standard.set(gSoundsEnabled, forKey: "spacerabbit.sounds")
+    }
+
     @objc private func toggleLaunchAtLogin() {
         do {
             if launchAtLoginControl.state == .on {
@@ -748,7 +801,10 @@ final class AboutViewController: NSViewController {
         copyrightLabel.font      = .systemFont(ofSize: 11)
         copyrightLabel.textColor = .tertiaryLabelColor
 
-        let appStack = NSStackView(views: [iconView, nameLabel, versionLabel, copyrightLabel])
+        let websiteLink = makeAuthorLink(name: "space-rabbit.app", url: "https://space-rabbit.app")
+        websiteLink.font = .systemFont(ofSize: 11)
+
+        let appStack = NSStackView(views: [iconView, nameLabel, versionLabel, copyrightLabel, websiteLink])
         appStack.orientation = .vertical
         appStack.alignment   = .centerX
         appStack.spacing     = 5
@@ -765,7 +821,7 @@ final class AboutViewController: NSViewController {
 
         let updateText = NSTextField(wrappingLabelWithString: "")
         updateText.preferredMaxLayoutWidth = 340
-        updateText.stringValue  = "Space Rabbit does not update automatically. Updates must be applied manually."
+        updateText.stringValue  = "Space Rabbit does not update automatically. Updates must be applied manually. However, we will notify you when there is a new update available."
         updateText.font         = .systemFont(ofSize: 11)
         updateText.textColor    = .secondaryLabelColor
 
@@ -1108,6 +1164,37 @@ final class SwoopObserver: NSObject {
     }
 }
 
+// MARK: - Update check
+
+private func isNewerVersion(_ remote: String, than local: String) -> Bool {
+    let strip = { (s: String) -> String in s.hasPrefix("v") ? String(s.dropFirst()) : s }
+    let parts = { (s: String) -> [Int] in strip(s).split(separator: ".").compactMap { Int($0) } }
+    let r = parts(remote), l = parts(local)
+    for i in 0..<max(r.count, l.count) {
+        let rv = i < r.count ? r[i] : 0
+        let lv = i < l.count ? l[i] : 0
+        if rv != lv { return rv > lv }
+    }
+    return false
+}
+
+func checkForUpdates() {
+    guard let url = URL(string: "https://api.github.com/repos/Tahul/space-rabbit/releases/latest")
+    else { return }
+    URLSession.shared.dataTask(with: url) { data, _, _ in
+        guard let data,
+              let json   = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let tag    = json["tag_name"] as? String,
+              let assets = json["assets"] as? [[String: Any]],
+              let dmg    = assets.first(where: { ($0["name"] as? String)?.hasSuffix(".dmg") == true }),
+              let dlURL  = dmg["browser_download_url"] as? String
+        else { return }
+        let current = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        guard isNewerVersion(tag, than: current) else { return }
+        DispatchQueue.main.async { gMenu?.showUpdateBanner(downloadURL: dlURL) }
+    }.resume()
+}
+
 // MARK: - Signal handler (must be a global C-compatible function)
 
 func onSignal(_ sig: Int32) {
@@ -1130,6 +1217,8 @@ guard AXIsProcessTrustedWithOptions(axOpts as CFDictionary) else {
 loadSpaceSwitchShortcuts()
 
 gMenu = SwoopMenu()
+
+DispatchQueue.main.asyncAfter(deadline: .now() + 5) { checkForUpdates() }
 
 // Event tap
 let eventMask = CGEventMask(1 << CGEventType.keyDown.rawValue)
