@@ -55,7 +55,7 @@ If you don't, you will be asked for your signature key identifier when building 
 
 ## Release & notarize
 
-👉 _This procedure is only used by repository maintainers to release new versions of Space Rabbit._
+👉 This procedure is only used by repository maintainers to release new versions of Space Rabbit.
 
 1. Prior to distributing a release, create a new Git tag so that the new version is picked up during build. Tags should be formatted as such: `v1.0.0`.
 
@@ -73,7 +73,7 @@ make release
 
 4. When the final DMG has been packaged and notarized, simply draft a new release on [space-rabbit/releases](https://github.com/Tahul/space-rabbit/releases) and upload `Space-Rabbit.dmg`.
 
-The website does not need to be updated, since the download button points to the `Space-Rabbit.dmg` file from the latest release.
+👉 The website does not need to be updated, since the download button points to the `Space-Rabbit.dmg` file from the latest release.
 
 👉 You can configure your signing key by creating a `local.env` file with eg.:
 
