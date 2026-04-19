@@ -1,44 +1,141 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* =====================================================================
+   Space Rabbit — Stylesheet
+   =====================================================================
+   This file contains all styles for the Space Rabbit landing page.
+   It is organised into the following sections:
+
+     1. Reset & Base Styles
+     2. Design Tokens (CSS Custom Properties)
+     3. Body
+     4. Hero Section
+     5. Demo / Menu Card
+     6. Shared Section Styles (Comparison + Features)
+     7. Comparison Section
+     8. Features Section
+     9. Footer
+    10. Scroll Hint
+    11. Theme Toggle Button
+    12. Light Mode Overrides
+    13. Responsive Breakpoints
+   ===================================================================== */
+
+
+/* =====================================================================
+   1. Reset & Base Styles
+   =====================================================================
+   A minimal reset: remove default margins/padding and switch to the
+   more intuitive border-box sizing model so that padding and borders
+   are included in an element's declared width/height.
+   ===================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Enable smooth scrolling for anchor links (e.g. "scroll to learn more"
+   button that targets #comparison). */
+html {
+  scroll-behavior: smooth;
+}
+
+
+/* =====================================================================
+   2. Design Tokens (CSS Custom Properties)
+   =====================================================================
+   All colours and the font stack are defined here as CSS custom
+   properties on :root.  The light-mode override (section 12) simply
+   reassigns these variables, which cascades everywhere automatically.
+   ===================================================================== */
 
 :root {
-  --bg:      #0b0b12;
+  /* Background colour for the page body */
+  --bg: #0b0b12;
+
+  /* Slightly lighter surface colour (used for cards, toggle, etc.) */
   --surface: #13131e;
-  --border:  rgba(255,255,255,0.08);
-  --text:    #e8e8f2;
-  --muted:   #6b6b88;
-  --accent:  #7c6bff;
-  --font:    -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+  /* Subtle border colour — semi-transparent white in dark mode */
+  --border: rgba(255, 255, 255, 0.08);
+
+  /* Primary text colour */
+  --text: #e8e8f2;
+
+  /* De-emphasised / secondary text colour */
+  --muted: #6b6b88;
+
+  /* Brand accent colour (purple) — used for highlights and active states */
+  --accent: #7c6bff;
+
+  /* System font stack — matches macOS / Windows / Linux native fonts for
+     a clean, native-feeling reading experience. */
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    Arial, sans-serif;
 }
+
+
+/* =====================================================================
+   3. Body
+   =====================================================================
+   Global typography and background.  overflow-x: hidden prevents
+   horizontal scrollbars caused by decorative elements that bleed
+   outside the viewport (glow blobs, animations, etc.).
+   ===================================================================== */
 
 body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
+
+  /* Improve font rendering on macOS WebKit / Blink browsers */
   -webkit-font-smoothing: antialiased;
+
+  /* Prevent horizontal scroll from off-screen decorative elements */
   overflow-x: hidden;
 }
 
-/* ── Hero ──────────────────────────────────────────── */
+
+/* =====================================================================
+   4. Hero Section
+   =====================================================================
+   The main above-the-fold area.  It is a full-viewport-height flex
+   column that centres the logo, headline, tagline, CTA button, and
+   the menu-bar demo card.
+   ===================================================================== */
 
 .hero {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+
+  /* Clip any child that overflows (e.g. glow blobs at the edges) */
   overflow: hidden;
+
+  /* Top padding accounts for the fixed theme-toggle button; bottom
+     padding provides breathing room before the next section. */
   padding: 100px 24px 80px;
+
+  /* Ensure the hero fills at least the full viewport height */
   min-height: 100vh;
 }
 
+/* App logo image */
 .hero-icon {
   width: 192px;
   height: 192px;
   margin-bottom: 32px;
+
+  /* Frosted-glass effect behind the logo for visual depth */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
+/* Main headline — uses clamp() for fluid responsive sizing that
+   scales smoothly between mobile (2.6rem) and desktop (4rem). */
 .hero h1 {
   font-size: clamp(2.6rem, 6vw, 4rem);
   font-weight: 800;
@@ -46,25 +143,41 @@ body {
   line-height: 1.05;
   margin-bottom: 32px;
   color: #fff;
+
+  /* Start invisible and offset downward; the fadeInUp animation
+     will reveal and slide it into place.  The delay staggers it
+     slightly after the page loads. */
   opacity: 0;
   transform: translateY(10px);
   animation: fadeInUp 0.7s ease forwards;
   animation-delay: 0.25s;
 }
 
+/* The accented word "Instantly." gets its own delayed animation so
+   it appears after the first line, creating a staggered reveal. */
 .hero h1 span {
   color: var(--accent);
   display: inline-block;
+
+  /* Same invisible starting state as the parent h1 */
   opacity: 0;
   transform: translateY(10px);
   animation: fadeInUp 0.7s ease forwards;
+
+  /* Longer delay so it appears ~0.5 s after the first line */
   animation-delay: 0.75s;
 }
 
+/* Shared fade-in-and-slide-up animation used by the hero headline
+   and its accented span. */
 @keyframes fadeInUp {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+/* Tagline paragraph beneath the headline */
 .hero p {
   font-size: 1.05rem;
   color: #fff;
@@ -73,11 +186,18 @@ body {
   margin-bottom: 44px;
 }
 
+/* ── Download CTA Button ──────────────────────────────────────────────
+   A large, pill-shaped button with a purple gradient background and
+   multiple layered box-shadows for a 3D / glossy appearance.
+   The hover state scales up slightly; the active state presses in. */
+
 .btn-download {
   display: inline-flex;
   align-items: center;
   gap: 14px;
   padding: 22px 30px 24px;
+
+  /* Three-stop vertical gradient for a convex / glossy look */
   background: linear-gradient(180deg, #8a7aef 0%, #6b58f0 50%, #5a47e0 100%);
   color: #fff;
   font-size: 17px;
@@ -86,41 +206,64 @@ body {
   border-radius: 60px;
   text-decoration: none;
   border: none;
+
+  /* Layered shadows:
+     1. Inset highlight at the top edge (gloss)
+     2. Inset shadow at the bottom edge (depth)
+     3. Large diffuse outer shadow (elevation)
+     4. Tight outer shadow (contact shadow) */
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.12) inset,
-    0 -1px 0 rgba(0,0,0,0.25) inset,
-    0 8px 24px rgba(0,0,0,0.45),
-    0 2px 6px rgba(0,0,0,0.45);
+    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.25) inset,
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.45);
+
   transition: filter 0.25s, transform 0.75s ease;
 }
 
+/* Hover: slightly brighter and scaled up for a "floating" feel */
 .btn-download:hover {
   filter: brightness(1.05);
   transform: scale(1.04);
 }
 
+/* Active / pressed: scale down and darken for a tactile press effect */
 .btn-download:active {
   transform: scale(0.99);
   filter: brightness(0.96);
+
+  /* Replace the outer shadows with inset shadows to simulate being
+     pressed into the surface */
   box-shadow:
-    0 1px 0 rgba(0,0,0,0.20) inset,
-    0 2px 4px rgba(0,0,0,0.25) inset,
-    0 4px 12px rgba(0,0,0,0.80),
-    0 1px 4px rgba(0,0,0,0.80);
+    0 1px 0 rgba(0, 0, 0, 0.20) inset,
+    0 2px 4px rgba(0, 0, 0, 0.25) inset,
+    0 4px 12px rgba(0, 0, 0, 0.80),
+    0 1px 4px rgba(0, 0, 0, 0.80);
 }
 
+/* Prevent the inline Apple logo SVG from shrinking in the flex row */
 .btn-download svg {
   flex: 0 0 auto;
 }
 
+/* Small "Free · Open source · Apple Silicon" line below the CTA */
 p.hero-sub {
   margin-top: 10px;
   font-size: 14px;
   color: var(--muted);
 }
 
-/* ── Demo ──────────────────────────────────────────── */
 
+/* =====================================================================
+   5. Demo / Menu Card
+   =====================================================================
+   A decorative reproduction of the Space Rabbit macOS menu-bar
+   dropdown.  Sits inside the hero section with animated glow blobs
+   floating behind it.
+   ===================================================================== */
+
+/* Wrapper that centres the card and provides padding.
+   overflow: visible allows the glow blobs to bleed outside. */
 .demo-wrap {
   display: flex;
   justify-content: center;
@@ -129,10 +272,21 @@ p.hero-sub {
   position: relative;
   overflow: visible;
   text-align: left;
+
+  /* Prevent accidental text selection when dragging over the card */
   user-select: none;
 }
 
-/* animated glow blobs */
+/* ── Glow Blobs ───────────────────────────────────────────────────────
+   Three large, blurred, semi-transparent radial-gradient circles
+   positioned absolutely behind the menu card.  Each blob has its
+   own CSS animation (glow1 / glow2 / glow3) that fades it in and
+   gently drifts it around.
+
+   animation-timing-function uses steps(300, end) to approximate
+   ~30 fps for a performance-friendly "lazy drift" feel rather than
+   a smooth 60 fps animation (these are purely decorative). */
+
 .glow-blob {
   position: absolute;
   border-radius: 50%;
@@ -142,85 +296,125 @@ p.hero-sub {
   animation-duration: 10s;
   animation-fill-mode: forwards;
   animation-iteration-count: 1;
-  animation-timing-function: steps(300, end); /* ~30fps */
+  animation-timing-function: steps(300, end);
 }
 
+/* Blob 1: Blue — centre-left */
 .glow-1 {
-  width: 650px; height: 500px;
-  background: radial-gradient(ellipse, rgba(30, 60, 220, 0.28) 0%, transparent 70%);
-  top: 50%; left: 50%;
+  width: 650px;
+  height: 500px;
+  background: radial-gradient(
+    ellipse,
+    rgba(30, 60, 220, 0.28) 0%,
+    transparent 70%
+  );
+  top: 50%;
+  left: 50%;
   margin: -260px 0 0 -400px;
   animation-name: glow1;
 }
+
+/* Blob 2: Purple — upper-right */
 .glow-2 {
-  width: 560px; height: 480px;
-  background: radial-gradient(ellipse, rgba(110, 20, 180, 0.25) 0%, transparent 70%);
-  top: 25%; left: 68%;
+  width: 560px;
+  height: 480px;
+  background: radial-gradient(
+    ellipse,
+    rgba(110, 20, 180, 0.25) 0%,
+    transparent 70%
+  );
+  top: 25%;
+  left: 68%;
   margin: -240px 0 0 -340px;
   animation-name: glow2;
 }
+
+/* Blob 3: Red — lower-left */
 .glow-3 {
-  width: 520px; height: 440px;
-  background: radial-gradient(ellipse, rgba(180, 15, 35, 0.22) 0%, transparent 70%);
-  top: 72%; left: 28%;
+  width: 520px;
+  height: 440px;
+  background: radial-gradient(
+    ellipse,
+    rgba(180, 15, 35, 0.22) 0%,
+    transparent 70%
+  );
+  top: 72%;
+  left: 28%;
   margin: -220px 0 0 -300px;
   animation-name: glow3;
 }
 
+/* Blob 1 animation: fades in, then gently oscillates position/scale.
+   The last two keyframes are identical so the blob "parks" at the end. */
 @keyframes glow1 {
-  0%   { opacity: 0; transform: scale(0.5) translate(0px, 30px); }
-  18%  { opacity: 1; transform: scale(1)   translate(0px, 0px); }
+  0%   { opacity: 0; transform: scale(0.5)  translate(0px, 30px); }
+  18%  { opacity: 1; transform: scale(1)    translate(0px, 0px); }
   40%  { opacity: 1; transform: scale(1.15) translate(50px, -30px); }
   62%  { opacity: 1; transform: scale(0.95) translate(-25px, 35px); }
   80%  { opacity: 1; transform: scale(1.08) translate(20px, -15px); }
   100% { opacity: 1; transform: scale(1.08) translate(20px, -15px); }
 }
+
+/* Blob 2 animation: similar drift pattern with different offsets */
 @keyframes glow2 {
-  0%   { opacity: 0; transform: scale(0.5) translate(0px, -20px); }
-  22%  { opacity: 1; transform: scale(1)   translate(0px, 0px); }
+  0%   { opacity: 0; transform: scale(0.5)  translate(0px, -20px); }
+  22%  { opacity: 1; transform: scale(1)    translate(0px, 0px); }
   45%  { opacity: 1; transform: scale(1.1)  translate(-40px, 25px); }
   68%  { opacity: 1; transform: scale(0.92) translate(30px, -20px); }
   85%  { opacity: 1; transform: scale(1.05) translate(-10px, 10px); }
   100% { opacity: 1; transform: scale(1.05) translate(-10px, 10px); }
 }
+
+/* Blob 3 animation: similar drift pattern with different offsets */
 @keyframes glow3 {
-  0%   { opacity: 0; transform: scale(0.5) translate(10px, 0px); }
-  25%  { opacity: 1; transform: scale(1)   translate(0px, 0px); }
+  0%   { opacity: 0; transform: scale(0.5)  translate(10px, 0px); }
+  25%  { opacity: 1; transform: scale(1)    translate(0px, 0px); }
   50%  { opacity: 1; transform: scale(1.12) translate(35px, -40px); }
   72%  { opacity: 1; transform: scale(0.9)  translate(-20px, 20px); }
   88%  { opacity: 1; transform: scale(1.04) translate(15px, -8px); }
   100% { opacity: 1; transform: scale(1.04) translate(15px, -8px); }
 }
 
-/* macOS-style menu card */
+/* ── Menu Card ────────────────────────────────────────────────────────
+   A frosted-glass card that mimics a macOS menu-bar dropdown.
+   The ::before pseudo-element creates the small "tab" that connects
+   the card to the menu bar above it. */
+
 .menu-card {
   position: relative;
   width: 310px;
   background: rgba(28, 28, 42, 0.95);
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 14px;
   padding: 5px 0;
+
+  /* Layered shadows for depth: a large diffuse shadow + a tighter one */
   box-shadow:
-    0 32px 80px rgba(0,0,0,0.60),
-    0 4px 20px rgba(0,0,0,0.40);
+    0 32px 80px rgba(0, 0, 0, 0.60),
+    0 4px 20px rgba(0, 0, 0, 0.40);
+
+  /* Frosted-glass backdrop blur */
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
   font-size: 14px;
 }
 
+/* Pseudo-element "tab" above the card — mimics the menu-bar icon area.
+   Connects visually to the card below it. */
 .menu-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -32px;
   left: 22px;
   width: 38px;
   height: 31px;
   background: rgba(28, 28, 42, 0.95);
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-bottom: none;
   border-radius: 7px 7px 0 0;
 }
 
+/* Rabbit emoji icon sitting inside the menu-bar tab */
 .menu-rabbit {
   position: absolute;
   top: -28px;
@@ -234,11 +428,14 @@ p.hero-sub {
   z-index: 1;
 }
 
+/* ── Menu Rows ────────────────────────────────────────────────────────
+   Individual rows inside the menu card.  Each row is a flex container
+   with an icon, label text, and optionally a trailing checkmark. */
+
 .menu-row {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 6px 14px;
   color: var(--text);
   line-height: 1.3;
   border-radius: 7px;
@@ -248,24 +445,50 @@ p.hero-sub {
   transition: background 0.12s;
 }
 
-.menu-row:hover { background: rgba(255,255,255,0.07); }
-.menu-row.danger:hover { background: rgba(255,80,80,0.12); }
-.menu-row.muted { color: var(--muted); font-size: 12px; }
-.menu-row.muted:hover { background: none; cursor: default; pointer-events: none; }
-.menu-row.danger { color: #ff6b6b; }
+/* Hover highlight for interactive rows */
+.menu-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
 
+/* Destructive (red) row hover — tinted red */
+.menu-row.danger:hover {
+  background: rgba(255, 80, 80, 0.12);
+}
+
+/* Non-interactive muted row (e.g. "Version 1.0.0") */
+.menu-row.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.menu-row.muted:hover {
+  background: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Destructive row text colour */
+.menu-row.danger {
+  color: #ff6b6b;
+}
+
+/* Active / highlighted row (e.g. "Space Rabbit is enabled") */
 .menu-row.active {
   background: rgba(124, 107, 255, 0.20);
 }
 
-.menu-row.active:hover { background: rgba(124, 107, 255, 0.28); }
+.menu-row.active:hover {
+  background: rgba(124, 107, 255, 0.28);
+}
 
+/* Horizontal separator line between menu groups */
 .menu-sep {
   height: 1px;
   background: var(--border);
   margin: 5px 0;
 }
 
+/* Section header label (e.g. "Configure") */
 .menu-header {
   padding: 5px 14px 3px;
   font-size: 11px;
@@ -274,6 +497,10 @@ p.hero-sub {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+/* ── Menu Icon Badges ─────────────────────────────────────────────────
+   Small coloured rounded squares to the left of each menu row,
+   containing a tiny SVG icon. */
 
 .menu-icon {
   width: 20px;
@@ -286,14 +513,21 @@ p.hero-sub {
   line-height: 0;
 }
 
-.menu-icon svg { display: block; width: 11px; height: 11px; }
+/* Constrain the SVG icon inside the badge */
+.menu-icon svg {
+  display: block;
+  width: 11px;
+  height: 11px;
+}
 
+/* Colour variants for each menu icon badge */
 .menu-icon.green  { background: #28a745; }
 .menu-icon.blue   { background: #2563eb; }
 .menu-icon.indigo { background: #4f46e5; }
 .menu-icon.gray   { background: #3a3a52; }
 .menu-icon.red    { background: #dc2626; }
 
+/* Trailing checkmark indicator (pushed to the right via auto margin) */
 .menu-check {
   margin-left: auto;
   display: flex;
@@ -301,11 +535,24 @@ p.hero-sub {
   line-height: 0;
 }
 
-.menu-check svg { display: block; width: 13px; height: 13px; }
+.menu-check svg {
+  display: block;
+  width: 13px;
+  height: 13px;
+}
 
-/* ── Shared Section Styles ────────────────────────── */
 
-.comparison, .features {
+/* =====================================================================
+   6. Shared Section Styles (Comparison + Features)
+   =====================================================================
+   Both the "comparison" and "features" sections share the same
+   background treatment, border, padding, and inner-container
+   centering.  Specific widths differ per section.
+   ===================================================================== */
+
+.comparison,
+.features {
+  /* Semi-transparent dark overlay with a subtle backdrop blur */
   background: #00000030;
   border-top: 1px solid var(--border);
   padding: 88px 24px 104px;
@@ -313,20 +560,27 @@ p.hero-sub {
   -webkit-backdrop-filter: blur(20px);
 }
 
-.comparison-inner, .features-inner {
+/* Shared centring for inner content wrappers */
+.comparison-inner,
+.features-inner {
   margin: 0 auto;
 }
 
+/* The comparison section is wider to accommodate the two side-by-side
+   panels plus the arrow between them. */
 .comparison-inner {
   max-width: 1000px;
 }
 
-.comparison-header, .features-header {
+/* Shared header styling for both sections */
+.comparison-header,
+.features-header {
   text-align: center;
   margin-bottom: 48px;
 }
 
-.comparison-header h2, .features-header h2 {
+.comparison-header h2,
+.features-header h2 {
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -334,7 +588,8 @@ p.hero-sub {
   margin-bottom: 18px;
 }
 
-.comparison-header p, .features-header p {
+.comparison-header p,
+.features-header p {
   font-size: 16px;
   color: var(--muted);
   max-width: 540px;
@@ -342,6 +597,8 @@ p.hero-sub {
   line-height: 1.6;
 }
 
+/* Small "eyebrow" label above the comparison section heading
+   (e.g. "TIME SAVED") */
 .comparison-eyebrow {
   font-size: 11px;
   font-weight: 600;
@@ -350,14 +607,22 @@ p.hero-sub {
   text-transform: uppercase;
   display: inline-block;
   margin-bottom: 20px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
   padding: 6px 12px;
 }
 
-/* ── Comparison ────────────────────────────────────── */
 
+/* =====================================================================
+   7. Comparison Section
+   =====================================================================
+   Two side-by-side panels ("before" vs "after") with animated desktop
+   mock-ups.  The JS drives the animation; these styles provide layout,
+   sizing, and the visual treatment.
+   ===================================================================== */
+
+/* Flex container for the two panels + the arrow between them */
 .comparison-panels {
   display: flex;
   gap: 24px;
@@ -365,10 +630,11 @@ p.hero-sub {
   justify-content: center;
 }
 
+/* Each comparison panel (before / after) */
 .comparison-panel {
   flex: 1 1 340px;
   max-width: 420px;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 18px;
@@ -378,6 +644,7 @@ p.hero-sub {
   gap: 12px;
 }
 
+/* "Your Mac right now" / "With Space Rabbit" label badge */
 .panel-label {
   font-size: 12px;
   font-weight: 600;
@@ -388,25 +655,39 @@ p.hero-sub {
   width: fit-content;
 }
 
+/* Red-tinted label for the "before" panel */
 .label-before {
   background: rgba(255, 80, 80, 0.15);
   color: #ffc3c3;
 }
 
+/* Green-tinted label for the "after" panel */
 .label-after {
   background: rgba(40, 167, 69, 0.15);
   color: #89ffac;
 }
 
+/* ── Desktop Mock-up ──────────────────────────────────────────────────
+   A rectangular area that simulates two macOS desktops side by side.
+   overflow: hidden clips the sliding desktop spaces during animation.
+   aspect-ratio keeps the shape consistent regardless of content. */
+
 .desktop-mock {
   position: relative;
   overflow: hidden;
   aspect-ratio: 380 / 240;
-  background: linear-gradient(135deg, rgba(50, 30, 80, 0.3) 0%, rgba(30, 50, 100, 0.2) 100%);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(
+    135deg,
+    rgba(50, 30, 80, 0.3) 0%,
+    rgba(30, 50, 100, 0.2) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 10px;
 }
 
+/* Each "desktop space" fills the mock container via inset: 0 and is
+   positioned via CSS transforms (translateX) controlled by JS.
+   They sit on top of each other; only one is visible at a time. */
 .desktop-space {
   position: absolute;
   inset: 0;
@@ -416,20 +697,26 @@ p.hero-sub {
   padding: 16px;
 }
 
+/* Space B starts off-screen to the right */
 .desktop-space.space-b {
   transform: translateX(100%);
 }
 
+/* "Desktop 1" / "Desktop 2" label inside each space */
 .desktop-label {
   font-size: 18px;
   font-weight: 700;
-  color: rgba(255,255,255,0.95);
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* ── App Mock-ups (Slack / Cursor) ────────────────────────────────────
+   Simplified representations of app windows inside each desktop space.
+   They have a frosted-glass background and a simulated title bar. */
+
 .app-mockup {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 12px;
   flex: 1;
@@ -440,6 +727,7 @@ p.hero-sub {
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* Shared title-bar styling for both the Slack and Cursor mock-ups */
 .app-slack .slack-header,
 .app-code .code-header {
   display: flex;
@@ -447,14 +735,18 @@ p.hero-sub {
   justify-content: center;
   gap: 7px;
   position: relative;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 6px 6px 0 0;
+
+  /* Negative margins extend the header to the edges of the parent's
+     padding, simulating a full-bleed title bar. */
   margin: -12px -12px 0;
-  padding: 8px 12px 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   margin-bottom: 8px;
 }
 
+/* macOS-style traffic-light buttons (close / minimise / maximise) */
 .mac-lights {
   display: flex;
   gap: 5px;
@@ -474,12 +766,14 @@ p.hero-sub {
 .mac-light-yellow { background: #febc2e; }
 .mac-light-green  { background: #28c840; }
 
+/* Slack-specific title bar text */
 .app-slack .slack-header {
   font-size: 14px;
   font-weight: 700;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
 }
 
+/* App icon in the mock title bars (Slack / Cursor logos) */
 .app-icon {
   width: 20px;
   height: 20px;
@@ -487,31 +781,40 @@ p.hero-sub {
   flex-shrink: 0;
 }
 
+/* Slack message text (not currently used in the HTML but kept for
+   completeness if messages are added later) */
 .app-slack .slack-message {
   font-size: 13px;
-  color: rgba(255,255,255,0.95);
+  color: rgba(255, 255, 255, 0.95);
   line-height: 1.4;
 }
 
+/* Cursor-specific title bar text */
 .app-code .code-header {
   font-size: 14px;
   font-weight: 700;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+/* Code line text inside the Cursor mock-up (not currently populated) */
 .app-code .code-line {
   font-size: 12px;
-  color: rgba(255,255,255,0.95);
+  color: rgba(255, 255, 255, 0.95);
   font-family: "Monaco", "Courier New", monospace;
   line-height: 1.3;
 }
+
+/* ── Timer Badge ──────────────────────────────────────────────────────
+   Overlaid in the top-right corner of each desktop mock-up.
+   Shows the elapsed time of the space-switch animation (updated by JS).
+   Uses tabular-nums so the numbers don't jitter as digits change. */
 
 .timer-badge {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   border-radius: 8px;
   font-size: 24px;
   font-weight: 700;
@@ -520,9 +823,10 @@ p.hero-sub {
   color: #fff;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+/* Caption text below each desktop mock-up */
 .panel-caption {
   font-size: 12px;
   color: var(--muted);
@@ -533,10 +837,13 @@ p.hero-sub {
   gap: 15px;
 }
 
+/* The "after" panel caption uses brighter text to emphasise the
+   positive outcome */
 .panel-after .panel-caption {
   color: var(--text);
 }
 
+/* Small Space Rabbit logo next to the "after" panel caption */
 .caption-icon {
   width: 34px;
   height: 34px;
@@ -544,6 +851,7 @@ p.hero-sub {
   border-radius: 6px;
 }
 
+/* Arrow icon between the two comparison panels */
 .comparison-arrow {
   display: flex;
   align-items: center;
@@ -553,34 +861,51 @@ p.hero-sub {
   align-self: center;
 }
 
+/* ── Keyboard Key Buttons ─────────────────────────────────────────────
+   Small "CTRL" and "→" key indicators that pop in during the
+   comparison animation to show which keys are being pressed.
+   They start hidden (opacity: 0, scaled down) and become visible
+   when JS adds the .show class. */
+
 .key-button {
   position: absolute;
   top: calc(50% + 34px);
-  transform: translateY(-50%) scale(0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   width: 48px;
   height: 40px;
   background: #8a8aa6;
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
   color: #fff;
   z-index: 10;
+
+  /* Hidden by default — JS toggles .show to reveal them */
   opacity: 0;
   pointer-events: none;
   transform: scale(0.5);
-  transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.15), 0 2px 4px rgba(0,0,0,0.3);
+
+  /* Bouncy spring-like transition for a playful pop-in effect */
+  transition:
+    opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Inset highlight + outer shadow for a physical key appearance */
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Position the CTRL key to the left of centre */
 .key-ctrl {
   left: 50%;
   margin-left: -56px;
 }
 
+/* Position the arrow key to the right of centre */
 .key-arrow {
   left: 50%;
   margin-left: 2px;
@@ -589,59 +914,61 @@ p.hero-sub {
   width: 40px;
 }
 
+/* Visible state — applied by JS during the animation cycle */
 .key-button.show {
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
 
-/* ── Features ──────────────────────────────────────── */
 
+/* =====================================================================
+   8. Features Section
+   =====================================================================
+   A grid of feature cards.  4 columns on desktop, 2 on tablets,
+   1 on mobile (see responsive section below).
+   ===================================================================== */
+
+/* Narrower max-width than the comparison section since the cards
+   are smaller and don't need as much horizontal room. */
 .features-inner {
   max-width: 860px;
 }
 
+/* CSS Grid layout for the feature cards */
 .feature-list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
 }
 
-@media (max-width: 768px) {
-  #stars { display: none; }
-  .btn-download { font-size: 14px; padding: 16px 22px 18px; gap: 10px; }
-}
-
-@media (max-width: 840px) {
-  .comparison-arrow { display: none; }
-}
-
-@media (max-width: 720px) {
-  .feature-list { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 420px) {
-  .feature-list { grid-template-columns: 1fr; }
-}
-
+/* Individual feature card */
 .feature-item {
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 22px 20px;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+
+  /* Subtle inset highlight at the top edge for a glass-like sheen */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Smooth transitions for hover effects */
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
   cursor: default;
 }
 
+/* Hover: slightly brighter background, more visible border, and a
+   small upward lift for a "raised" tactile effect. */
 .feature-item:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
 }
 
+/* Gradient icon box at the top of each feature card.
+   Each card sets its own gradient colours via inline style. */
 .feature-icon-box {
   width: 48px;
   height: 48px;
@@ -650,18 +977,25 @@ p.hero-sub {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   line-height: 0;
 }
 
+/* SVG icon inside the icon box */
 .feature-icon-box svg {
   display: block;
   width: 24px;
   height: 24px;
 }
 
-.feature-text { display: flex; flex-direction: column; gap: 4px; }
+/* Text area (title + description) below the icon */
+.feature-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
+/* Feature card title */
 .feature-item strong {
   font-size: 15px;
   font-weight: 600;
@@ -670,13 +1004,20 @@ p.hero-sub {
   line-height: 1.3;
 }
 
+/* Feature card description */
 .feature-item p {
   font-size: 13px;
   color: var(--muted);
   line-height: 1.5;
 }
 
-/* ── Footer ────────────────────────────────────────── */
+
+/* =====================================================================
+   9. Footer
+   =====================================================================
+   Centred column layout with author credits (pill-shaped links with
+   GitHub avatars) and project links (GitHub, Releases).
+   ===================================================================== */
 
 footer {
   border-top: 1px solid var(--border);
@@ -688,6 +1029,7 @@ footer {
   text-align: center;
 }
 
+/* "Brought to you by:" label */
 .footer-made {
   font-size: 12px;
   color: var(--muted);
@@ -695,6 +1037,7 @@ footer {
   text-transform: uppercase;
 }
 
+/* Container for the author pill links */
 .footer-authors {
   display: flex;
   gap: 12px;
@@ -702,12 +1045,17 @@ footer {
   justify-content: center;
 }
 
+/* ── Pill Component ───────────────────────────────────────────────────
+   A reusable rounded "pill" link used for the author credits and
+   the scroll-hint button.  Has a subtle border, background, and
+   hover / active interactive states. */
+
 .pill {
   display: flex;
   align-items: center;
   gap: 9px;
   padding: 8px 14px 8px 12px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   border-radius: 999px;
   text-decoration: none;
@@ -718,45 +1066,17 @@ footer {
 }
 
 .pill:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.14);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .pill:active {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
   transform: translateY(1px);
 }
 
-#scroll-hint {
-  position: fixed;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-  cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.4s ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  white-space: nowrap;
-  padding: 10px 20px 12px;
-}
-
-#scroll-hint svg {
-  flex: 0 0 auto;
-}
-
-#scroll-hint:active {
-  transform: translateX(-50%) translateY(1px);
-}
-
-#scroll-hint.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-
+/* Author avatar image inside each pill */
 .footer-author img {
   width: 26px;
   height: 26px;
@@ -764,6 +1084,7 @@ footer {
   display: block;
 }
 
+/* Row of footer links (GitHub, Releases) */
 .footer-links {
   display: flex;
   gap: 20px;
@@ -776,9 +1097,62 @@ footer {
   transition: color 0.15s;
 }
 
-.footer-links a:hover { color: var(--text); }
+.footer-links a:hover {
+  color: var(--text);
+}
 
-/* ── Theme toggle button ────────────────────────────── */
+
+/* =====================================================================
+   10. Scroll Hint
+   =====================================================================
+   A fixed "Scroll to learn more" pill at the bottom of the viewport.
+   Uses the .pill class for its base styling and adds fixed positioning.
+   Auto-hides via the .hidden class once the user scrolls (driven by JS).
+   ===================================================================== */
+
+#scroll-hint {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+
+  /* Frosted-glass background behind the pill */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* Prevent the text from wrapping onto two lines */
+  white-space: nowrap;
+  padding: 10px 20px 12px;
+}
+
+/* Prevent the chevron SVG from shrinking in the flex layout */
+#scroll-hint svg {
+  flex: 0 0 auto;
+}
+
+/* Slight downward shift on press for tactile feedback */
+#scroll-hint:active {
+  transform: translateX(-50%) translateY(1px);
+}
+
+/* Hidden state — applied by JS after the user scrolls past 30vh */
+#scroll-hint.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* =====================================================================
+   11. Theme Toggle Button
+   =====================================================================
+   A small circular button fixed to the top-right corner of the
+   viewport.  Clicking it toggles between dark and light mode (handled
+   by JS adding/removing the .light class on <body>).
+   ===================================================================== */
 
 #theme-toggle {
   position: fixed;
@@ -796,110 +1170,145 @@ footer {
   align-items: center;
   justify-content: center;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
-#theme-toggle:hover { color: var(--text); }
-#theme-toggle svg { display: block; }
+#theme-toggle:hover {
+  color: var(--text);
+}
 
-/* ── Light mode ────────────────────────────────────── */
+/* Ensure the SVG icon renders as a block to avoid inline spacing */
+#theme-toggle svg {
+  display: block;
+}
+
+
+/* =====================================================================
+   12. Light Mode Overrides
+   =====================================================================
+   When <body> has the .light class, these rules override the dark-mode
+   custom properties and component-specific styles.
+
+   The approach is:
+     1. Reassign the CSS custom properties on body.light
+     2. Override any hardcoded colour values that don't use variables
+   ===================================================================== */
 
 body.light {
-  --bg:      #f2f2f7;
+  --bg: #f2f2f7;
   --surface: #ffffff;
-  --border:  rgba(0,0,0,0.08);
-  --text:    #1c1c2e;
-  --muted:   #8e8ea8;
-  --accent:  #6b58f0;
+  --border: rgba(0, 0, 0, 0.08);
+  --text: #1c1c2e;
+  --muted: #8e8ea8;
+  --accent: #6b58f0;
 }
 
+/* Hero headline and paragraph use hardcoded #fff in dark mode,
+   so they need explicit overrides for light mode. */
 body.light .hero h1 { color: #1c1c2e; }
 body.light .hero p  { color: #3a3a4e; }
 
-body.light .glow-1 { background: radial-gradient(ellipse, rgba(30, 60, 220, 0.12) 0%, transparent 70%); }
+/* Glow blobs: reduced opacity so they don't overpower the light bg */
+body.light .glow-1 { background: radial-gradient(ellipse, rgba(30, 60, 220, 0.12)  0%, transparent 70%); }
 body.light .glow-2 { background: radial-gradient(ellipse, rgba(110, 20, 180, 0.10) 0%, transparent 70%); }
-body.light .glow-3 { background: radial-gradient(ellipse, rgba(180, 15, 35, 0.09) 0%, transparent 70%); }
+body.light .glow-3 { background: radial-gradient(ellipse, rgba(180, 15, 35, 0.09)  0%, transparent 70%); }
 
+/* Menu card: white background instead of dark frosted glass */
 body.light .menu-card {
-  background: rgba(255,255,255,0.96);
-  border-color: rgba(0,0,0,0.10);
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(0, 0, 0, 0.10);
   box-shadow:
-    0 2px 0 rgba(255,255,255,0.80) inset,
-    0 32px 80px rgba(0,0,0,0.12),
-    0 4px 20px rgba(0,0,0,0.07);
+    0 2px 0 rgba(255, 255, 255, 0.80) inset,
+    0 32px 80px rgba(0, 0, 0, 0.12),
+    0 4px 20px rgba(0, 0, 0, 0.07);
 }
 
 body.light .menu-card::before {
-  background: rgba(255,255,255,0.96);
-  border-color: rgba(0,0,0,0.10);
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(0, 0, 0, 0.10);
 }
 
+/* Destructive menu row uses a different red in light mode */
 body.light .menu-row.danger { color: #dc2626; }
 
-body.light .feature-icon-box { box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+/* Hover states for menu rows in light mode */
+body.light .menu-row:hover { background: rgba(0, 0, 0, 0.06); }
+body.light .menu-row.danger:hover { background: rgba(220, 38, 38, 0.08); }
+body.light .menu-row.active:hover { background: rgba(124, 107, 255, 0.28); }
 
+/* Softer shadows for feature icons on a light background */
+body.light .feature-icon-box { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); }
+
+/* Feature cards: lighter tint and a bright inset highlight */
 body.light .feature-item {
-  background: rgba(0,0,0,0.025);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.80);
+  background: rgba(0, 0, 0, 0.025);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.80);
 }
 
 body.light .feature-item:hover {
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.12);
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
-body.light .pill { background: rgba(0,0,0,0.04); }
+/* Pill links in light mode */
+body.light .pill { background: rgba(0, 0, 0, 0.04); }
 
 body.light .pill:hover {
-  background: rgba(0,0,0,0.07);
-  border-color: rgba(0,0,0,0.14);
+  background: rgba(0, 0, 0, 0.07);
+  border-color: rgba(0, 0, 0, 0.14);
 }
 
 body.light .pill:active {
-  background: rgba(0,0,0,0.10);
-  border-color: rgba(0,0,0,0.18);
+  background: rgba(0, 0, 0, 0.10);
+  border-color: rgba(0, 0, 0, 0.18);
 }
 
-body.light #theme-toggle { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+/* Softer shadow for the theme toggle in light mode */
+body.light #theme-toggle { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
 
-body.light .menu-row:hover { background: rgba(0,0,0,0.06); }
-body.light .menu-row.danger:hover { background: rgba(220,38,38,0.08); }
-body.light .menu-row.active:hover { background: rgba(124, 107, 255, 0.28); }
-
+/* CTA button shadow adjustments for light mode —
+   purple-tinted glow instead of pure black. */
 body.light .btn-download {
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.12) inset,
-    0 -1px 0 rgba(0,0,0,0.25) inset,
+    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.25) inset,
     0 8px 24px rgba(91, 71, 224, 0.28),
-    0 2px 6px rgba(0,0,0,0.20);
+    0 2px 6px rgba(0, 0, 0, 0.20);
 }
 
 body.light .btn-download:active {
   box-shadow:
-    0 1px 0 rgba(0,0,0,0.15) inset,
-    0 2px 4px rgba(0,0,0,0.18) inset,
+    0 1px 0 rgba(0, 0, 0, 0.15) inset,
+    0 2px 4px rgba(0, 0, 0, 0.18) inset,
     0 4px 12px rgba(91, 71, 224, 0.22),
-    0 1px 4px rgba(0,0,0,0.20);
+    0 1px 4px rgba(0, 0, 0, 0.20);
 }
 
-body.light .comparison, body.light .features {
+/* Section backgrounds: nearly transparent white tint */
+body.light .comparison,
+body.light .features {
   background: #ffffff1a;
 }
 
-body.light .comparison-header h2, body.light .features-header h2 {
+/* Section headings in light mode */
+body.light .comparison-header h2,
+body.light .features-header h2 {
   color: #1c1c2e;
 }
 
+/* Eyebrow label in light mode */
 body.light .comparison-eyebrow {
   color: #1c1c2e;
-  background: rgba(0,0,0,0.05);
-  border-color: rgba(0,0,0,0.10);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.10);
 }
 
+/* Comparison panel card background */
 body.light .comparison-panel {
-  background: rgba(0,0,0,0.025);
+  background: rgba(0, 0, 0, 0.025);
 }
 
+/* Panel labels in light mode — use bolder, darker colours */
 body.light .label-before {
   background: rgba(220, 38, 38, 0.12);
   color: #dc2626;
@@ -910,44 +1319,108 @@ body.light .label-after {
   color: #16a34a;
 }
 
+/* Desktop mock-up backgrounds: lighter purple gradient */
 body.light .desktop-mock {
-  background: linear-gradient(135deg, rgba(100, 80, 150, 0.2) 0%, rgba(80, 100, 150, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(100, 80, 150, 0.2) 0%,
+    rgba(80, 100, 150, 0.15) 100%
+  );
 }
 
 body.light .desktop-space {
-  background: linear-gradient(135deg, rgba(120, 100, 170, 0.2) 0%, rgba(100, 120, 170, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(120, 100, 170, 0.2) 0%,
+    rgba(100, 120, 170, 0.15) 100%
+  );
 }
 
+/* Desktop labels: dark text without text-shadow */
 body.light .desktop-label {
-  color: rgba(0,0,0,0.85);
+  color: rgba(0, 0, 0, 0.85);
   text-shadow: none;
 }
 
+/* App mock-ups: darker tint on light backgrounds */
 body.light .app-mockup {
-  background: rgba(0,0,0,0.08);
-  border-color: rgba(0,0,0,0.12);
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
+/* Slack mock: dark text for readability on light background */
 body.light .app-slack .slack-header {
-  color: rgba(0,0,0,0.85);
-  border-bottom-color: rgba(0,0,0,0.12);
+  color: rgba(0, 0, 0, 0.85);
+  border-bottom-color: rgba(0, 0, 0, 0.12);
 }
 
 body.light .app-slack .slack-message {
-  color: rgba(0,0,0,0.85);
+  color: rgba(0, 0, 0, 0.85);
 }
 
+/* Cursor mock: dark text for readability on light background */
 body.light .app-code .code-header {
-  color: rgba(0,0,0,0.85);
-  border-bottom-color: rgba(0,0,0,0.12);
+  color: rgba(0, 0, 0, 0.85);
+  border-bottom-color: rgba(0, 0, 0, 0.12);
 }
 
+/* Code lines use a blue-ish tint for syntax-highlighting feel */
 body.light .app-code .code-line {
   color: rgba(30, 80, 150, 0.95);
 }
 
+/* Keyboard key buttons: lighter colour in light mode */
 body.light .key-button {
   background: #c0c0d4;
-  border-color: rgba(0,0,0,0.15);
+  border-color: rgba(0, 0, 0, 0.15);
   color: #fff;
+}
+
+
+/* =====================================================================
+   13. Responsive Breakpoints
+   =====================================================================
+   Stacked at the bottom of the file so they can cleanly override
+   the desktop defaults above.  Ordered from largest to smallest
+   breakpoint for clarity.
+   ===================================================================== */
+
+/* ── Tablet / narrow desktop (≤ 840px) ────────────────────────────────
+   Hide the arrow between comparison panels since the panels will
+   likely stack vertically. */
+@media (max-width: 840px) {
+  .comparison-arrow {
+    display: none;
+  }
+}
+
+/* ── Mobile (≤ 768px) ─────────────────────────────────────────────────
+   - Hide the starfield canvas (too expensive / distracting on mobile)
+   - Shrink the download button to fit smaller screens */
+@media (max-width: 768px) {
+  #stars {
+    display: none;
+  }
+
+  .btn-download {
+    font-size: 14px;
+    padding: 16px 22px 18px;
+    gap: 10px;
+  }
+}
+
+/* ── Small tablet (≤ 720px) ───────────────────────────────────────────
+   Collapse the feature grid from 4 columns to 2. */
+@media (max-width: 720px) {
+  .feature-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Narrow mobile (≤ 420px) ──────────────────────────────────────────
+   Collapse the feature grid to a single column. */
+@media (max-width: 420px) {
+  .feature-list {
+    grid-template-columns: 1fr;
+  }
 }

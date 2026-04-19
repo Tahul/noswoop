@@ -1,145 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- ====================================================================
+       Space Rabbit — Landing Page
+       A single-page marketing site for the Space Rabbit macOS app.
+       ==================================================================== -->
+
+  <!-- Character encoding — must come first so the browser parses the
+       rest of the document correctly. -->
   <meta charset="UTF-8" />
+
+  <!-- Responsive viewport — ensures the page scales properly on mobile
+       devices and tablets. -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Page title — shown in browser tabs and search engine results. -->
   <title>Instant Space Switching for macOS | Space Rabbit</title>
-  <meta name="description" content="Space Rabbit removes the macOS Spaces slide animation. Zero delay, zero config." />
+
+  <!-- SEO description — shown as the snippet beneath the title in
+       search engine result pages (SERPs). -->
+  <meta
+    name="description"
+    content="Space Rabbit removes the macOS Spaces slide animation. Zero delay, zero config."
+  />
+
+  <!-- ── Favicons ───────────────────────────────────────────────────────
+       Multiple sizes are provided so every browser / OS can pick the most
+       appropriate resolution.  The .ico fallback covers legacy browsers. -->
   <link rel="icon" type="image/png" sizes="512x512" href="./images/favicon-512x512.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon.png" />
-  <link rel="shortcut icon" href="./images/favicon.ico" />
-  <meta property="og:title" content="Instant Space Switching for macOS" />
+  <link rel="icon" type="image/png" sizes="32x32"  href="./images/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16"  href="./images/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180"      href="./images/apple-touch-icon.png" />
+  <link rel="shortcut icon"                          href="./images/favicon.ico" />
+
+  <!-- ── Open Graph meta tags ───────────────────────────────────────────
+       Used by Facebook, LinkedIn, iMessage, Slack, etc. when someone
+       shares a link to this page. -->
+  <meta property="og:title"       content="Instant Space Switching for macOS" />
   <meta property="og:description" content="Space Rabbit removes the macOS Spaces slide animation. Zero delay, zero config." />
-  <meta property="og:image" content="./images/og-image.png" />
+  <meta property="og:image"       content="./images/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://space-rabbit.app/" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Instant Space Switching for macOS" />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://space-rabbit.app/" />
+
+  <!-- ── Twitter / X card meta tags ─────────────────────────────────────
+       "summary_large_image" renders a wide preview card in the timeline. -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Instant Space Switching for macOS" />
   <meta name="twitter:description" content="Space Rabbit removes the macOS Spaces slide animation. Zero delay, zero config." />
-  <meta name="twitter:image" content="./images/og-image.png" />
+  <meta name="twitter:image"       content="./images/og-image.png" />
+
+  <!-- ── Stylesheet ─────────────────────────────────────────────────────
+       All visual styles live in a separate CSS file for maintainability. -->
   <link rel="stylesheet" href="./assets/style.css" />
 </head>
-<body>
-  <canvas id="stars" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0"></canvas>
 
+<body>
+  <!-- ====================================================================
+       Starfield Canvas
+       A full-viewport canvas that renders an animated star field behind
+       all page content.  It is fixed-positioned and ignores pointer
+       events so it never interferes with scrolling or clicks.
+       ==================================================================== -->
+  <canvas
+    id="stars"
+    style="position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"
+  ></canvas>
+
+  <!-- ====================================================================
+       Theme Toggle Button
+       Fixed to the top-right corner.  Swaps between dark (default) and
+       light mode by toggling a class on <body>.  The two SVG icons
+       (moon / sun) are toggled via display:none in JS.
+       ==================================================================== -->
   <button id="theme-toggle" aria-label="Toggle light/dark mode">
-    <svg id="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    <!-- Moon icon — visible in dark mode (default) -->
+    <svg
+      id="icon-moon"
+      width="16" height="16"
+      viewBox="0 0 24 24"
+      fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
-    <svg id="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+
+    <!-- Sun icon — visible in light mode, hidden by default -->
+    <svg
+      id="icon-sun"
+      width="16" height="16"
+      viewBox="0 0 24 24"
+      fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      style="display: none;"
+    >
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1"  x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22"  y1="4.22"  x2="5.64"  y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1"  y1="12" x2="3"  y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36" />
+      <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22" />
     </svg>
   </button>
 
+  <!-- ====================================================================
+       Hero Section
+       The main above-the-fold area: logo, headline, tagline, and the
+       primary CTA download button.  Also contains the interactive
+       menu-bar demo card with decorative glow blobs behind it.
+       ==================================================================== -->
   <section class="hero">
-    <img class="hero-icon" src="./images/logo.png" alt="Space Rabbit" onerror="this.style.display='none'" />
-    <h1>Switch spaces.<br/><span>Instantly.</span></h1>
+    <!-- App logo — gracefully hides itself if the image fails to load -->
+    <img
+      class="hero-icon"
+      src="./images/logo.png"
+      alt="Space Rabbit"
+      onerror="this.style.display='none'"
+    />
+
+    <!-- Main headline with animated fade-in (see CSS @keyframes fadeInUp).
+         The accented word "Instantly." has a separate, delayed animation. -->
+    <h1>
+      Switch spaces.<br />
+      <span>Instantly.</span>
+    </h1>
+
+    <!-- Tagline / value proposition -->
     <p>Remove animations when switching macOS Spaces. Reclaim hours of your time every week.</p>
-    <a class="btn-download" href="https://github.com/Tahul/space-rabbit/releases/latest/download/Space-Rabbit.dmg">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" style="margin-top:-3px">
-        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+
+    <!-- Primary CTA — links directly to the latest .dmg release on GitHub -->
+    <a
+      class="btn-download"
+      href="https://github.com/Tahul/space-rabbit/releases/latest/download/Space-Rabbit.dmg"
+    >
+      <!-- Apple logo SVG icon -->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="white" style="margin-top: -3px;">
+        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
       </svg>
       Download Space Rabbit for macOS
     </a>
+
+    <!-- Supplementary info beneath the CTA -->
     <p class="hero-sub">Free · Open source · Apple Silicon</p>
 
-  <div class="demo-wrap">
-    <div class="glow-blob glow-1"></div>
-    <div class="glow-blob glow-2"></div>
-    <div class="glow-blob glow-3"></div>
-    <div class="menu-card">
+    <!-- ── Demo: Menu Bar Card ────────────────────────────────────────
+         A purely decorative reproduction of the Space Rabbit menu-bar
+         dropdown.  Three animated glow blobs float behind the card for
+         a subtle ambient lighting effect (see CSS @keyframes glow1–3). -->
+    <div class="demo-wrap">
+      <!-- Decorative background glow blobs -->
+      <div class="glow-blob glow-1"></div>
+      <div class="glow-blob glow-2"></div>
+      <div class="glow-blob glow-3"></div>
 
-      <div class="menu-rabbit">🐇</div>
+      <!-- Fake macOS menu bar dropdown -->
+      <div class="menu-card">
+        <!-- Rabbit emoji in the "menu bar tab" above the card -->
+        <div class="menu-rabbit">🐇</div>
 
-      <div class="menu-row active">
-        <div class="menu-icon green">
-          <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 5.5l2.5 2.5L9 3"/>
-          </svg>
+        <!-- Status row — highlighted with the "active" modifier -->
+        <div class="menu-row active">
+          <div class="menu-icon green">
+            <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 5.5l2.5 2.5L9 3" />
+            </svg>
+          </div>
+          Space Rabbit is enabled
         </div>
-        Space Rabbit is enabled
-      </div>
 
-      <div class="menu-sep"></div>
+        <div class="menu-sep"></div>
 
-      <div class="menu-header">Configure</div>
+        <!-- Section header -->
+        <div class="menu-header">Configure</div>
 
-      <div class="menu-row">
-        <div class="menu-icon blue">
-          <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1 4h9M7 2l2 2-2 2"/><path d="M4 7H1m0 0 2 2M1 7l2-2"/>
-          </svg>
+        <!-- Toggle row: Instant space switch (checked) -->
+        <div class="menu-row">
+          <div class="menu-icon blue">
+            <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 4h9M7 2l2 2-2 2" />
+              <path d="M4 7H1m0 0 2 2M1 7l2-2" />
+            </svg>
+          </div>
+          Instant space switch
+          <span class="menu-check">
+            <svg viewBox="0 0 13 13" fill="none" stroke="#7c6bff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.5 6.5l3 3 5-5" />
+            </svg>
+          </span>
         </div>
-        Instant space switch
-        <span class="menu-check">
-          <svg viewBox="0 0 13 13" fill="none" stroke="#7c6bff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2.5 6.5l3 3 5-5"/>
-          </svg>
-        </span>
-      </div>
 
-      <div class="menu-row">
-        <div class="menu-icon indigo">
-          <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
-            <circle cx="5.5" cy="5.5" r="2"/>
-            <path d="M5.5 1v1.5M5.5 8.5V10M1 5.5h1.5M8.5 5.5H10"/>
-          </svg>
+        <!-- Toggle row: Auto-follow Cmd+Tab (checked) -->
+        <div class="menu-row">
+          <div class="menu-icon indigo">
+            <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="5.5" cy="5.5" r="2" />
+              <path d="M5.5 1v1.5M5.5 8.5V10M1 5.5h1.5M8.5 5.5H10" />
+            </svg>
+          </div>
+          Auto-follow Cmd+Tab
+          <span class="menu-check">
+            <svg viewBox="0 0 13 13" fill="none" stroke="#7c6bff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.5 6.5l3 3 5-5" />
+            </svg>
+          </span>
         </div>
-        Auto-follow Cmd+Tab
-        <span class="menu-check">
-          <svg viewBox="0 0 13 13" fill="none" stroke="#7c6bff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2.5 6.5l3 3 5-5"/>
-          </svg>
-        </span>
-      </div>
 
-      <div class="menu-sep"></div>
+        <div class="menu-sep"></div>
 
-      <div class="menu-row muted">Version 1.0.0</div>
+        <!-- Version info (non-interactive) -->
+        <div class="menu-row muted">Version 1.0.0</div>
 
-      <div class="menu-row">
-        <div class="menu-icon gray">
-          <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
-            <circle cx="5.5" cy="5.5" r="1.5"/>
-            <path d="M5.5 1.5v1M5.5 8.5v1M1.5 5.5h1M8.5 5.5h1M2.9 2.9l.7.7M7.4 7.4l.7.7M2.9 8.1l.7-.7M7.4 3.6l.7-.7"/>
-          </svg>
+        <!-- Preferences link -->
+        <div class="menu-row">
+          <div class="menu-icon gray">
+            <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="5.5" cy="5.5" r="1.5" />
+              <path d="M5.5 1.5v1M5.5 8.5v1M1.5 5.5h1M8.5 5.5h1M2.9 2.9l.7.7M7.4 7.4l.7.7M2.9 8.1l.7-.7M7.4 3.6l.7-.7" />
+            </svg>
+          </div>
+          Preferences…
         </div>
-        Preferences…
-      </div>
 
-      <div class="menu-sep"></div>
+        <div class="menu-sep"></div>
 
-      <div class="menu-row danger">
-        <div class="menu-icon red">
-          <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
-            <path d="M2.5 2.5l6 6M8.5 2.5l-6 6"/>
-          </svg>
+        <!-- Quit action (destructive / red) -->
+        <div class="menu-row danger">
+          <div class="menu-icon red">
+            <svg viewBox="0 0 11 11" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round">
+              <path d="M2.5 2.5l6 6M8.5 2.5l-6 6" />
+            </svg>
+          </div>
+          Quit
         </div>
-        Quit
       </div>
-
+      <!-- /.menu-card -->
     </div>
-  </div>
+    <!-- /.demo-wrap -->
   </section>
+  <!-- /.hero -->
 
+  <!-- ====================================================================
+       Comparison Section
+       Side-by-side animated panels showing the difference between the
+       default macOS Spaces animation (~0.8 s slide) and Space Rabbit's
+       instant switch.  The animation loop is driven by JS (see main.js).
+       ==================================================================== -->
   <section class="comparison" id="comparison">
     <div class="comparison-inner">
+
+      <!-- Section header with eyebrow label -->
       <div class="comparison-header">
         <span class="comparison-eyebrow">Time Saved</span>
-        <h2>You lose 1 second per switch.<br/>For every desktop switch.</h2>
-        <p>10,000 space switches a week × 0.8 second = <strong>~2 hours lost</strong> every week. Space Rabbit gives you back hours of time every week.</p>
+        <h2>
+          You lose 1 second per switch.<br />
+          For every desktop switch.
+        </h2>
+        <p>
+          10,000 space switches a week × 0.8 second =
+          <strong>~2 hours lost</strong> every week.
+          Space Rabbit gives you back hours of time every week.
+        </p>
       </div>
+
       <div class="comparison-panels">
+        <!-- ── "Before" panel (stock macOS, with slide animation) ───── -->
         <div class="comparison-panel panel-before">
           <div class="panel-label label-before">Your Mac right now</div>
+
+          <!-- Desktop mock — the two .desktop-space children slide
+               left/right via CSS transforms driven by JS. -->
           <div class="desktop-mock" id="mock-before">
-            <div class="key-button key-ctrl" id="key-before-ctrl">CTRL</div>
+            <!-- Keyboard key indicators (shown briefly during animation) -->
+            <div class="key-button key-ctrl"  id="key-before-ctrl">CTRL</div>
             <div class="key-button key-arrow" id="key-before-arrow">→</div>
-            <div class="desktop-space space-a" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(88, 166, 255, 0.5) 100%);">
+
+            <!-- Desktop 1 (Slack) — starts visible -->
+            <div
+              class="desktop-space space-a"
+              style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(88, 166, 255, 0.5) 100%);"
+            >
               <div class="desktop-label">Desktop 1</div>
               <div class="app-mockup app-slack">
                 <div class="slack-header">
@@ -153,7 +296,12 @@
                 </div>
               </div>
             </div>
-            <div class="desktop-space space-b" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.6) 0%, rgba(236, 72, 153, 0.5) 100%);">
+
+            <!-- Desktop 2 (Cursor) — starts off-screen right -->
+            <div
+              class="desktop-space space-b"
+              style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.6) 0%, rgba(236, 72, 153, 0.5) 100%);"
+            >
               <div class="desktop-label">Desktop 2</div>
               <div class="app-mockup app-code">
                 <div class="code-header">
@@ -168,20 +316,38 @@
               </div>
             </div>
           </div>
+          <!-- /.desktop-mock -->
+
+          <!-- Elapsed-time counter (updated by JS during each cycle) -->
           <div class="timer-badge" id="timer-before">0.0s</div>
-          <p class="panel-caption">Each desktop switch takes 0.8s as per our measurements. A lot of macOS users run thousands of switches every week.</p>
+
+          <p class="panel-caption">
+            Each desktop switch takes 0.8s as per our measurements.
+            A lot of macOS users run thousands of switches every week.
+          </p>
         </div>
+        <!-- /.panel-before -->
+
+        <!-- Arrow separator between the two panels (hidden on narrow screens) -->
         <div class="comparison-arrow">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14M13 6l6 6-6 6"/>
+            <path d="M5 12h14M13 6l6 6-6 6" />
           </svg>
         </div>
+
+        <!-- ── "After" panel (with Space Rabbit, instant cut) ────────── -->
         <div class="comparison-panel panel-after">
           <div class="panel-label label-after">With Space Rabbit</div>
+
           <div class="desktop-mock" id="mock-after">
-            <div class="key-button key-ctrl" id="key-after-ctrl">CTRL</div>
+            <div class="key-button key-ctrl"  id="key-after-ctrl">CTRL</div>
             <div class="key-button key-arrow" id="key-after-arrow">→</div>
-            <div class="desktop-space space-a" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(88, 166, 255, 0.5) 100%);">
+
+            <!-- Desktop 1 (Slack) -->
+            <div
+              class="desktop-space space-a"
+              style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.6) 0%, rgba(88, 166, 255, 0.5) 100%);"
+            >
               <div class="desktop-label">Desktop 1</div>
               <div class="app-mockup app-slack">
                 <div class="slack-header">
@@ -195,7 +361,12 @@
                 </div>
               </div>
             </div>
-            <div class="desktop-space space-b" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.6) 0%, rgba(236, 72, 153, 0.5) 100%);">
+
+            <!-- Desktop 2 (Cursor) -->
+            <div
+              class="desktop-space space-b"
+              style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.6) 0%, rgba(236, 72, 153, 0.5) 100%);"
+            >
               <div class="desktop-label">Desktop 2</div>
               <div class="app-mockup app-code">
                 <div class="code-header">
@@ -210,28 +381,52 @@
               </div>
             </div>
           </div>
+          <!-- /.desktop-mock -->
+
+          <!-- Timer for the "after" panel — always shows 0.0s -->
           <div class="timer-badge" id="timer-after">0.0s</div>
+
           <p class="panel-caption">
             <img src="./images/logo.png" alt="Space Rabbit" class="caption-icon" />
             With Space Rabbit, switching desktops from your keyboard is instant. For real.
           </p>
         </div>
+        <!-- /.panel-after -->
       </div>
-    </div>
-  </section>
+      <!-- /.comparison-panels -->
 
+    </div>
+    <!-- /.comparison-inner -->
+  </section>
+  <!-- /.comparison -->
+
+  <!-- ====================================================================
+       Features Section
+       A grid of feature cards highlighting the app's key selling points.
+       Each card has a gradient icon box, a title, and a short description.
+       ==================================================================== -->
   <section class="features">
     <div class="features-inner">
+
+      <!-- Section header -->
       <div class="features-header">
         <h2>Fix macOS Spaces. In one app.</h2>
-        <p>A minimal native app to fix macOS Spaces. Because it's 2026 and Apple still hasn't released an option to disable Spaces switch animations.</p>
+        <p>
+          A minimal native app to fix macOS Spaces.
+          Because it's 2026 and Apple still hasn't released an option
+          to disable Spaces switch animations.
+        </p>
       </div>
+
+      <!-- Feature cards grid (4 columns on desktop, responsive) -->
       <div class="feature-list">
 
+        <!-- Feature 1: Instant switching -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #1a3fd4, #5b8fff)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #1a3fd4, #5b8fff);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 10h14M12 6l4 4-4 4"/><path d="M8 6 4 10l4 4"/>
+              <path d="M3 10h14M12 6l4 4-4 4" />
+              <path d="M8 6 4 10l4 4" />
             </svg>
           </div>
           <div class="feature-text">
@@ -240,11 +435,12 @@
           </div>
         </div>
 
+        <!-- Feature 2: Auto-follow Cmd+Tab -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #6d1fc4, #c060ff)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #6d1fc4, #c060ff);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="5" width="16" height="11" rx="2"/>
-              <path d="M7 5V4M13 5V4M10 10l2 2-2 2"/>
+              <rect x="2" y="5" width="16" height="11" rx="2" />
+              <path d="M7 5V4M13 5V4M10 10l2 2-2 2" />
             </svg>
           </div>
           <div class="feature-text">
@@ -253,11 +449,12 @@
           </div>
         </div>
 
+        <!-- Feature 3: Reads your shortcuts -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #0e7490, #22d3ee)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #0e7490, #22d3ee);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="5" width="16" height="11" rx="2"/>
-              <path d="M5 10h1.5M8.5 10H10M12 10h1.5M15 10h1M5 13.5h5M12 13.5h3"/>
+              <rect x="2" y="5" width="16" height="11" rx="2" />
+              <path d="M5 10h1.5M8.5 10H10M12 10h1.5M15 10h1M5 13.5h5M12 13.5h3" />
             </svg>
           </div>
           <div class="feature-text">
@@ -266,11 +463,12 @@
           </div>
         </div>
 
+        <!-- Feature 4: Menu bar app -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #b91c1c, #f87171)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #b91c1c, #f87171);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="14" height="4" rx="1.5"/>
-              <path d="M3 10h14M3 15h8"/>
+              <rect x="3" y="3" width="14" height="4" rx="1.5" />
+              <path d="M3 10h14M3 15h8" />
             </svg>
           </div>
           <div class="feature-text">
@@ -279,11 +477,12 @@
           </div>
         </div>
 
+        <!-- Feature 5: No SIP changes -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #065f46, #34d399)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #065f46, #34d399);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 2L3 5.5v4.5c0 3.6 2.8 7 7 7.7 4.2-.7 7-4.1 7-7.7V5.5L10 2z"/>
-              <path d="M7 10l2.5 2.5L14 7"/>
+              <path d="M10 2L3 5.5v4.5c0 3.6 2.8 7 7 7.7 4.2-.7 7-4.1 7-7.7V5.5L10 2z" />
+              <path d="M7 10l2.5 2.5L14 7" />
             </svg>
           </div>
           <div class="feature-text">
@@ -292,11 +491,12 @@
           </div>
         </div>
 
+        <!-- Feature 6: Zero configuration -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #92400e, #fbbf24)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #92400e, #fbbf24);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="10" cy="10" r="3"/>
-              <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M4.6 15.4l1.4-1.4M14 6l1.4-1.4"/>
+              <circle cx="10" cy="10" r="3" />
+              <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M4.6 15.4l1.4-1.4M14 6l1.4-1.4" />
             </svg>
           </div>
           <div class="feature-text">
@@ -305,11 +505,12 @@
           </div>
         </div>
 
+        <!-- Feature 7: Lightweight native app -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #1e3a5f, #60a5fa)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #1e3a5f, #60a5fa);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 3c-1.5 2.5-5 4-5 7a5 5 0 0 0 10 0c0-3-3.5-4.5-5-7z"/>
-              <path d="M7.5 16.5c.7.3 1.5.5 2.5.5s1.8-.2 2.5-.5"/>
+              <path d="M10 3c-1.5 2.5-5 4-5 7a5 5 0 0 0 10 0c0-3-3.5-4.5-5-7z" />
+              <path d="M7.5 16.5c.7.3 1.5.5 2.5.5s1.8-.2 2.5-.5" />
             </svg>
           </div>
           <div class="feature-text">
@@ -318,11 +519,12 @@
           </div>
         </div>
 
+        <!-- Feature 8: Free & open source -->
         <div class="feature-item">
-          <div class="feature-icon-box" style="background: linear-gradient(135deg, #3b1f6e, #a78bfa)">
+          <div class="feature-icon-box" style="background: linear-gradient(135deg, #3b1f6e, #a78bfa);">
             <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="10" cy="10" r="8"/>
-              <path d="M7 10l2.5 2.5L14 7"/>
+              <circle cx="10" cy="10" r="8" />
+              <path d="M7 10l2.5 2.5L14 7" />
             </svg>
           </div>
           <div class="feature-text">
@@ -332,11 +534,23 @@
         </div>
 
       </div>
-    </div>
-  </section>
+      <!-- /.feature-list -->
 
+    </div>
+    <!-- /.features-inner -->
+  </section>
+  <!-- /.features -->
+
+  <!-- ====================================================================
+       Footer
+       Credits, author links (with GitHub avatars), and project links.
+       Author order is randomized on each page load by JS to ensure
+       fair attribution.
+       ==================================================================== -->
   <footer>
     <p class="footer-made">Brought to you by:</p>
+
+    <!-- Author pills — order is shuffled by JS on every page load -->
     <div class="footer-authors">
       <a class="footer-author pill" href="https://valeriansaliou.name/" target="_blank" rel="noopener">
         <img src="https://github.com/valeriansaliou.png?size=128" alt="Valerian Saliou" />
@@ -347,21 +561,44 @@
         Yaël Guilloux
       </a>
     </div>
+
+    <!-- Project links -->
     <div class="footer-links">
       <a href="https://github.com/Tahul/space-rabbit" target="_blank" rel="noopener">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:5px;margin-top:-2px"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub
+        <!-- Inline GitHub Octocat SVG icon -->
+        <svg
+          width="14" height="14"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          style="display: inline-block; vertical-align: middle; margin-right: 5px; margin-top: -2px;"
+        >
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+        </svg>
+        GitHub
       </a>
-      <a href="https://github.com/Tahul/space-rabbit/releases" target="_blank" rel="noopener">Releases</a>
+      <a href="https://github.com/Tahul/space-rabbit/releases" target="_blank" rel="noopener">
+        Releases
+      </a>
     </div>
   </footer>
 
+  <!-- ====================================================================
+       Scroll Hint
+       A fixed pill button at the bottom of the viewport that invites
+       the user to scroll down.  It auto-hides after the user scrolls
+       past 30% of the viewport height (see JS).
+       ==================================================================== -->
   <button id="scroll-hint" class="pill" aria-label="Scroll to learn more">
     Scroll to learn more
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 5v14M5 13l7 7 7-7"/>
+      <path d="M12 5v14M5 13l7 7 7-7" />
     </svg>
   </button>
 
+  <!-- ── JavaScript ─────────────────────────────────────────────────────
+       Loaded at the end of <body> so the DOM is ready when it executes.
+       Contains: theme toggle, starfield animation, scroll hint, author
+       randomization, and the comparison section animation loop. -->
   <script src="./assets/main.js"></script>
 </body>
 </html>
