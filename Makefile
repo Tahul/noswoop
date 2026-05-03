@@ -102,4 +102,4 @@ release: dmg notarize
 
 clean:
 	rm -f $(BIN) $(ICNS)
-	rm -rf AppIcon.iconset $(Q_BUNDLE)
+	rm -rf AppIcon.iconset $(Q_BUNDLE) $(Q_DMG)
